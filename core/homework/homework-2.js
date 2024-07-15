@@ -51,34 +51,38 @@ const program = [
 // execute(program);
 
 console.log(execute(program))
-console.log(executeRecursive(program))
 
 function execute(program) {
-    let a = program[1];
+    let value;
+    let cursor = 0;
 
-    console.log(a);
+    while (true) {
+        const instruction = program[cursor];
 
-    while (a !== 0) {
-        a -= 1;
-        console.log(a);
-    }
-
-    return a;
-}
-
-// То же рекурсивно
-function executeRecursive(program) {
-    let a = program[1];
-
-    const inner = variable => {
-        console.log(variable);
-    
-        if (variable === 0) {
-            return variable;
+        if (instruction === instructions['SET A']) {
+            value = program[cursor + 1];
+            cursor += 2;
         }
-
-        return inner(variable - 1);
+        if (instruction === instructions['PRINT A']) {
+            console.log(value);
+            cursor += 1;
+        }
+        if (instruction === instructions['IFN A']) {
+            if (value === 0) {
+                cursor += 1;
+            } else {
+                cursor += 3;
+            }
+        }
+        if (instruction === instructions['RET']) {
+            return program[cursor + 1];
+        }
+        if (instruction === instructions['DEC A']) {
+            value -= 1;
+            cursor += 1;
+        }
+        if (instruction === instructions['JMP']) {
+            cursor = program[cursor + 1];
+        }
     }
-
-    return inner(a);
 }
