@@ -47,7 +47,7 @@ class LinkedListIterable {
     constructor() {
         this.first = null;
         this.last = null;
-        this.currentNode = null; // For iteration
+        this.currentNode = null; // For iterator
     }
 
     add(value) {
