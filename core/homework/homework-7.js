@@ -4,8 +4,6 @@ class BCD {
         this.bcd = '';
     }
 
-    
-
     convertToBCD(num) {
         if (typeof num !== 'number') {
             num = Number(num);
