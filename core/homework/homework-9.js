@@ -229,7 +229,7 @@ class Structure {
 
                     if (bytes > 1) {
                         for (let i = 0; i < arr.length; i += 2) {
-                            str += String.fromCharCode((arr[i * 2] << 8) | arr[i * 2 + 1]);
+                            str += String.fromCharCode((arr[i] << 8) | arr[i + 1]);
                         }
                     } else {
                         for (let i = 0; i < arr.length; i += 1) {
