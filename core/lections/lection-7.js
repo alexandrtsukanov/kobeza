@@ -58,3 +58,5 @@ console.log(uint32Array[0]); // 67305985
 // myarr.fill(4,1,3);
 // console.log(myarr);
 
+const aaa = new Uint16Array([1,2,3,4]);
+console.log(aaa.length);
