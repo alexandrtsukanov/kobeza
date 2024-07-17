@@ -30,8 +30,9 @@ class StackPointer extends Pointer {
 }
 
 class HeapPointer extends Pointer {
-    constructor(start, length, buffer) {
+    constructor(start, length, buffer, heap) {
         super(start, length, buffer);
+        this.heap = heap;
     }
 
     free() {
@@ -40,6 +41,8 @@ class HeapPointer extends Pointer {
         for (let i = this.start; i < this.start + this.length; i += 1) {
             arr[i] = 0;
         }
+
+        this.heap.heapOffset -= this.length;
     }
 }
 
@@ -48,8 +51,8 @@ class Memory {
         this.buffer = new ArrayBuffer(size);
         this.stackSize = stackData.stack;
         this.heapSize = size - this.stackSize;
-        this.stackTail = 0;
-        this.heapTail = this.stackSize;
+        this.stackOffset = 0;
+        this.heapOffset = this.stackSize;
         this.lastPointerInStack = null;
     }
 
@@ -60,17 +63,15 @@ class Memory {
         const arr = new Uint8Array(this.buffer);
         const bufferArr = new Uint8Array(buffer);
 
-        let pos = this.stackTail;
         let len = 0;
 
-        for (let i = this.stackTail; i < this.stackTail + bufferArr.byteLength; i += 1) {
+        for (let i = this.stackOffset; i < this.stackOffset + bufferArr.byteLength; i += 1) {
             arr[i] = bufferArr[i];
-            pos += 1;
             len += 1;
         }
 
-        const start = this.stackTail;
-        this.stackTail = pos;
+        const start = this.stackOffset;
+        this.stackOffset += len;
         const pointer = new StackPointer(start, len, this.buffer);
         this.lastPointerInStack = pointer;
 
@@ -82,9 +83,11 @@ class Memory {
 
         const arr = new Uint8Array(this.buffer);
 
-        for (let i = this.stackTail - 1; i > this.stackTail - 1 - this.lastPointerInStack.length; i -= 1) {
+        for (let i = this.stackOffset - 1; i > this.stackOffset - 1 - this.lastPointerInStack.length; i -= 1) {
             arr[i] = 0;
         }
+
+        this.stackOffset -= this.lastPointerInStack.length;
     }
 
     // Heap methods
@@ -93,36 +96,34 @@ class Memory {
 
         const arr = new Uint8Array(this.buffer);
 
-        let pos = this.heapTail;
         let len = 0;
 
-        for (let i = this.heapTail; i < this.heapTail + bytes; i += 1) {
+        for (let i = this.heapOffset; i < this.heapOffset + bytes; i += 1) {
             arr[i] = 1;
-            pos += 1;
             len += 1;
         }
 
-        const start = this.heapTail;
-        this.heapTail = pos;
+        const start = this.heapOffset;
+        this.heapOffset += len;
 
-        return new HeapPointer(start, len, this.buffer);;
+        return new HeapPointer(start, len, this.buffer, this);
     }
     
     // Help methods
     checkStackSize(buffer) {
-        if (this.stackTail + buffer.byteLength >= this.stackSize) {
+        if (this.stackOffset + buffer.byteLength >= this.stackSize) {
             throw new RangeError('Stack is overloaded');
         }
     }
 
     checkHeapSize(bytes) {
-        if (this.heapTail + bytes >= this.heapSize) {
+        if (this.heapOffset + bytes >= this.heapSize) {
             throw new RangeError('Heap is overloaded');
         }
     }
 
     checkIfStackIsEmpty() {
-        if (this.stackTail.length === 0) {
+        if (this.stackOffset.length === 0) {
             throw new Error('Stack is empty');
         };
     }
