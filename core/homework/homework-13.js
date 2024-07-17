@@ -8,6 +8,7 @@ class Graph {
     }
 
     createEdge(v1, v2, weight = 1) {
+        this.validate(v1, v2);
         this.matrix.set(v1, v2, weight);
         this.matrix.set(v2, v1, weight);
     }
@@ -18,6 +19,7 @@ class Graph {
     }
 
     createArc(v1, v2, weight = 1) {
+        this.validate(v1, v2);
         this.matrix.set(v1, v2, weight);
         this.matrix.set(v2, v1, 0);
     }
@@ -26,18 +28,24 @@ class Graph {
         this.matrix.set(v1, v2, 0);
     }
 
+    validate(v1, v2) {
+        if (v1 === v2) throw new Error('Vertex cannot be self-adjacent');
+    }
+
     // Itaretive
     traverse(v, cb) {
         const len = this.matrix.columns;
-        let count = len;
         let start = v * len
         const visited = new Set();
+        const stack = [];
 
         cb(v);
         visited.add(v);
+        stack.push(v)
 
-        while (count) {
-            let metAdjecency = false;
+        while (stack.length) {
+            const vertex = stack.pop();
+            start = vertex * len;
 
             for (let i = start; i < start + len; i += 1) {
                 const currentAdjencency = this.matrix.buffer[i];
@@ -45,16 +53,9 @@ class Graph {
     
                 if (currentAdjencency !== 0 && !visited.has(currentVertex)) {
                     cb(currentVertex);
-                    start = currentVertex * len;
+                    stack.push(currentVertex);
                     visited.add(currentVertex);
-                    metAdjecency = true;
-                    count -= 1;
-                    break;
                 }
-            }
-
-            if (!metAdjecency) {
-                break;
             }
         }
     }
@@ -83,23 +84,23 @@ class Matrix {
     }
 }
 
-const adjacencyMatrix = new Matrix(Uint8Array, 10, 10);
-const graph = new Graph(adjacencyMatrix);
-graph.createEdge(2, 7);
-graph.createEdge(1, 8);
-console.log(graph.checkAdjacency(7, 2));
+// const adjacencyMatrix = new Matrix(Uint8Array, 10, 10);
+// const graph = new Graph(adjacencyMatrix);
+// graph.createEdge(2, 7);
+// graph.createEdge(1, 8);
+// console.log(graph.checkAdjacency(7, 2));
 
 // graph.createArc(2, 7, 10);
 // graph.createArc(1, 8, 20);
-graph.createEdge(2, 4, 20);
-graph.createEdge(4, 5, 20);
-graph.createEdge(5, 3, 20);
-graph.createEdge(3, 6, 20);
-graph.createEdge(6, 7, 20);
-graph.createEdge(6, 8, 20);
+// graph.createEdge(2, 4, 20);
+// graph.createEdge(4, 5, 20);
+// graph.createEdge(5, 3, 20);
+// graph.createEdge(3, 6, 20);
+// graph.createEdge(6, 7, 20);
+// graph.createEdge(6, 8, 20);
 
-console.log(graph.checkAdjacency(7, 2)) 
+// console.log(graph.checkAdjacency(7, 2)) 
 
-console.log(adjacencyMatrix.buffer);
+// console.log(adjacencyMatrix.buffer);
 
-graph.traverse(2, console.log);
+// graph.traverse(2, console.log);
