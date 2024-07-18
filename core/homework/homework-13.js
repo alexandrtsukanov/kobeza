@@ -32,7 +32,7 @@ class Graph {
         if (v1 === v2) throw new Error('Vertex cannot be self-adjacent');
     }
 
-    // Itaretive
+    // Iterative
     traverse(v, cb) {
         const len = this.matrix.columns;
         let start = v * len
