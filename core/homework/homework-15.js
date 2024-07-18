@@ -3,12 +3,9 @@ function heapSort(arr) {
         siftUp(arr, i);
     }
 
-    let max = arr.length - 1;
-
     for (let i = arr.length - 1; i > 0; i -= 1) {
-        swap(arr, 0, max);
-        siftDown(arr, 0, max);
-        max -= 1;
+        swap(arr, 0, i);
+        siftDown(arr, 0, i);
     }
 }
 
