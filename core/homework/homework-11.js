@@ -4,7 +4,6 @@ class HashMap {
         this.capacity = capacity
         this.size = 0;
         this.constant = this.getCollisionConstant();
-        this.deleted = 'DELETED';
     }
 
     set(key, value) {
@@ -29,7 +28,7 @@ class HashMap {
             current = this.buffer[newIndex];
         }
 
-        return !current || current.value === this.deleted 
+        return !current || !current.hasOwnProperty('value')
             ? undefined
             : current.value;
     }
@@ -47,11 +46,11 @@ class HashMap {
             current = this.buffer[index];
         }
 
-        if (!current || current.value === this.deleted) {
+        if (!current || !current.hasOwnProperty('value')) {
             return;
         }
 
-        this.buffer[index].value = this.deleted;
+        delete this.buffer[index].value;
         this.size -= 1;
     }
 
@@ -70,7 +69,7 @@ class HashMap {
     }
     
     getFinalIndex(i, key) {
-        while (this.buffer[i] && this.buffer[i]?.value !== this.deleted && this.buffer[i]?.key !== key) {
+        while (this.buffer[i] && this.buffer[i].hasOwnProperty('value') && this.buffer[i]?.key !== key) {
             i = this.getNewIndex(i);
         }
 
@@ -98,18 +97,18 @@ class HashMap {
 
 const map = new HashMap(120);
 
-// map.set('foo', 42)
-// map.set('foo', 43)
+// map.set('foo', 42);
+// map.set('foo', 43);
 // console.log(map.get('foo'));
 
 // map.set('foo', 42);
-// map.set('oof', 43)
+// map.set('oof', 43);
 
 // console.log(map.get('foo'));
 // console.log(map.get('oof'));
 
 // map.delete('foo');
-// map.delete('oof')
+// map.delete('oof');
 
 // console.log(map.get('foo'));
 // console.log(map.get('oof'));
