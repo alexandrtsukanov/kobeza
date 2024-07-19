@@ -2,17 +2,16 @@ class Trie {
     constructor() {
         this.buffer = [];
         this.length = 0;
-        this.value = '';
         this.children = [];
-        this.isTerm = false;
-        this.positon = 0;
         this.cursor = 0;
     }
 
     addWord(str) {
-        const firstChar = this.buffer.find(el => el.value === str[0] && el.positon === 0);
+        const firsts = this.children.map(i => this.buffer[i]);
+        const firstChar = firsts.find(el => el?.value === str[0]);
 
         if (!firstChar) {
+            this.children.push(this.length);
             this.pushChars(str);
             return;
         }
@@ -87,7 +86,7 @@ const trie = new Trie();
 
 // console.log(trie.go('c').go('a').go('r').isWord());
 
-// console.dir(trie, {depth: null})
+// console.dir(trie, {depth: null});
 
 // --- //
 
