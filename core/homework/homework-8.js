@@ -8,7 +8,6 @@ class Vector {
         this.capacity = capacity;
         this.length = 0;
         this.array = new typedArrayConstructor(capacity);
-        this.cursor = 0; // For iterator
     }
 
     push(value) {
@@ -61,20 +60,22 @@ class Vector {
     }
 
     values() {
+        let cursor = 0;
+
         return {
             [Symbol.iterator]() {
                 return this;
             },
 
             next: () => {
-                if (this.cursor >= this.length) {
+                if (cursor >= this.length) {
                     return {done: true, value: undefined};
                 }
                 
-                const currentCursor = this.cursor;
-                this.cursor += 1;
+                const saved = cursor;
+                cursor += 1;
 
-                return {done: false, value: this.array[currentCursor]};
+                return {done: false, value: this.array[saved]};
             }
         }
     }
@@ -116,7 +117,6 @@ class Matrix {
         this.capacity = this.dimensions.reduce((acc, curr) => acc * curr, 1);
         this.array = new typedArrayConstructor(this.capacity);
         this.totalLength = 0;
-        this.cursor = 0; // For iterator
     }
 
     get(...coords) {
@@ -161,17 +161,19 @@ class Matrix {
     }
 
     values() {
+        let cursor = 0;
+
         return {
             [Symbol.iterator]() {
                 return this;
             },
 
             next: () => {
-                if (this.cursor >= this.totalLength) {
+                if (cursor >= this.totalLength) {
                     return {done: true, value: undefined};
                 }
 
-                return {done: false, value: this.array[this.cursor++]};
+                return {done: false, value: this.array[cursor++]};
             }
         }
     }
