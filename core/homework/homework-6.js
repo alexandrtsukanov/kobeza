@@ -66,18 +66,21 @@ class LinkedListIterable {
     }
 
     [Symbol.iterator]() {
-        return this;
+        let current = this.first;
+
+        return {
+            next: () => {
+                if (!current) {
+                    return {done: true, value: undefined};
+                }
+                
+                const saved = current;
+                current = current.next;
+                return {done: false, value: saved.value};
+            }
+        }
     }
 
-    next() {
-        if (!this.currentNode) {
-            return {done: true, value: undefined};
-        }
-        
-        const current = this.currentNode;
-        this.currentNode = this.currentNode.next;
-        return {done: false, value: current.value};
-    }
 }
 
 const listIterable = new LinkedListIterable();
