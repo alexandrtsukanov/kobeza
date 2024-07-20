@@ -7,7 +7,7 @@ function random(min, max) {
         },
         next() {
             return {done: false, value: Math.floor(Math.random() * (max - min + 1) + min)}
-        }
+        },
     };
 }
 
@@ -23,20 +23,20 @@ console.log(randomInt.next());
 
 function take(iterable, limit) {
     const iterator = iterable[Symbol.iterator]();
-    let i = limit;
+    let count = limit;
 
     return {
         [Symbol.iterator]() {
             return this;
         },
         next() {
-            while (i) {
-                i -= 1;
-                return {done: false, value: iterator.next().value};
+            if(!count) {
+                return {done: true, value: undefined};
             }
-
-            return {done: true, value: undefined};
-        }
+            
+            count -= 1;
+            return {done: false, value: iterator.next().value};
+        },
     }
 }
 
@@ -129,30 +129,30 @@ class Range {
     }
 
     reverse() {
+        let current = this.to;
+
         return {
-            [Symbol.iterator]: () => {
-                let current = this.to;
+            [Symbol.iterator]() {
+                return this;
+            },
 
-                return {
-                    next: () => {
-                        if (current < this.from) {
-                            return {done: true, value: undefined};
-                        }
-
-                        const saved = current;
-        
-                        switch (this.type) {
-                            case 'number':
-                                current -= 1;
-                                break;
-                            case 'string':
-                                current = String.fromCharCode(current.charCodeAt(0) - 1);
-                                break;
-                        }
-                        
-                        return {done: false, value: saved};
-                    }
+            next: () => {
+                if (current < this.from) {
+                    return {done: true, value: undefined};
                 }
+
+                const saved = current;
+
+                switch (this.type) {
+                    case 'number':
+                        current -= 1;
+                        break;
+                    case 'string':
+                        current = String.fromCharCode(current.charCodeAt(0) - 1);
+                        break;
+                }
+                
+                return {done: false, value: saved};
             }
         }
     }
@@ -199,8 +199,89 @@ console.log(Array.from(numberRange.reverse())); // [1, 0, -1, -2, -3, -4, -5]
 
 // ## Необходимо написать функцию seq, которая бы принимала множество Iterable объектов и возвращала итератор по их элементам
 
-function seq(iterables) {
+function seq(...iterables) {
+    const iterators = iterables.map(iterable => iterable[Symbol.iterator]());
+    let i = 0;
 
+    return {
+        [Symbol.iterator]() {
+            return this;
+        },
+
+        next() {
+            const currentState = iterators[i].next();
+
+            if (i === iterators.length - 1 && currentState.done) {
+                return {done: true, value: undefined};
+            }
+
+            if (currentState.done) {
+                i += 1;
+                return {done: false, value: iterators[i].next().value};
+            } 
+
+            return {done: false, value: currentState.value};
+        }
+    }
 }
 
-// console.log(...seq([1, 2], new Set([3, 4]), 'bla')); // 1, 2, 3, 4, 'b', 'l', 'a'
+console.log(...seq([1, 2], new Set([3, 4]), 'bla')); // 1, 2, 3, 4, 'b', 'l', 'a'
+
+
+// ## Необходимо написать функцию zip, которая бы принимала множество Iterable объектов и возвращала итератор по кортежам их элементов
+
+function zip(...iterables) {
+    const array = getArray(iterables);
+    let i = 0;
+
+    return {
+        [Symbol.iterator]() {
+            return this;
+        },
+
+        next() {
+            if (i >= array.length) {
+                return {done: true, value: undefined};
+            }
+
+            return {done: false, value: array[i++]};
+        }
+    }
+}
+
+console.log(...zip([1, 2], new Set([3, 4]), 'bl')); // [[1, 3, b], [2, 4, 'l']]
+
+function getSize(iterable) {
+    const iterator = iterable[Symbol.iterator]();
+    let count = 0;
+
+    while (!iterator.next().done) {
+        count += 1;
+    }
+
+    return count;
+}
+
+function getArray(iterables) {
+    if (!iterables.length) {
+        return [];
+    }
+
+    const size = getSize(iterables[0]);
+    const iterators = iterables.map(iterable => iterable[Symbol.iterator]());
+    const arr = [];
+
+    for (let i = 0; i < size; i += 1) {
+        arr.push(new Array(arr.length));
+    }
+
+    for (let j = 0; j < iterators.length; j += 1) {
+        const currentIterator = iterators[j];
+
+        for (let i = 0; i < size; i += 1) {
+            arr[i][j] = currentIterator.next().value;
+        }
+    }
+
+    return arr;
+}
