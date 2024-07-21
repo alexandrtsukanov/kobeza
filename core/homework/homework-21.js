@@ -6,7 +6,10 @@ function random(min, max) {
             return this;
         },
         next() {
-            return {done: false, value: Math.floor(Math.random() * (max - min + 1) + min)}
+            return {
+                done: false,
+                value: Math.floor(Math.random() * (max - min + 1) + min),
+            }
         },
     };
 }
@@ -64,7 +67,7 @@ function filter(iterable, callback) {
     }
 }
 
-console.log([...take(filter(randomInt, (el) => el > 30), 15)]);
+console.log([...take(filter(randomInt, (el) => el > 90), 15)]);
 
 
 // ## Необходимо написать функцию enumerate, которая принимает любой Iterable объект и возвращает итератор по парам (номер итерации, элемент)
@@ -78,13 +81,15 @@ function enumerate(iterable) {
             return this;
         },
         next() {
-            if (iterator.next().done) {
+            const currentState = iterator.next();
+
+            if (currentState.done) {
                 return {done: true, value: undefined};
             }
 
             return {
                 done: false,
-                value: [i++, iterator.next().value],
+                value: [i++, currentState.value],
             }
         }
     }
@@ -272,16 +277,53 @@ function getArray(iterables) {
     const arr = [];
 
     for (let i = 0; i < size; i += 1) {
-        arr.push(new Array(arr.length));
+        arr.push(new Array(iterables.length));
     }
 
-    for (let j = 0; j < iterators.length; j += 1) {
-        const currentIterator = iterators[j];
+    for (let i = 0; i < iterators.length; i += 1) {
+        const currentIterator = iterators[i];
 
-        for (let i = 0; i < size; i += 1) {
-            arr[i][j] = currentIterator.next().value;
+        for (let j = 0; j < size; j += 1) {
+            arr[j][i] = currentIterator.next().value;
         }
     }
 
     return arr;
 }
+
+// ## Необходимо написать функцию, которая принимала бы любой Iterable объект и Iterable с функциями и возвращала итератор где каждому элементу левого Iterable последовательно применяются все функции из правого
+
+function mapSeq(iterable, callbacks) {
+    const iterator = iterable[Symbol.iterator]();
+    let currentState = iterator.next();
+    let cbIterator = callbacks[Symbol.iterator]();
+    let currentCb = cbIterator.next();
+
+    return {
+        [Symbol.iterator]() {
+            return this;
+        },
+
+        next() {
+            if (currentState.done) {
+                return {done: true, value: undefined};
+            };
+
+            let piped = currentState.value;
+
+            while (!currentCb.done) {
+                const cb = currentCb.value;
+                piped = cb(piped);
+                currentCb = cbIterator.next();
+            }
+
+            currentState = iterator.next();
+            cbIterator = callbacks[Symbol.iterator]();
+            currentCb = cbIterator.next();
+
+            return {done: false, value: piped};
+        }
+    }
+}
+
+console.log(...mapSeq([1, 2, 3], [(el) => el * 2, (el) => el - 1, el => el + 10])); // [1, 3, 5]
