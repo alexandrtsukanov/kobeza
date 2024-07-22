@@ -38,7 +38,7 @@ console.log(res);
 // ## Нахождение арифметических операций в строке и замена на результат
 
 function calc(text) {
-    const re = /\(?\d+\s*([\+\-\\]|\*{1,2})\s*\d+(\s*([\+\-\\]|\*{1,2})\s*\d+)*(\)?(\s*([\+\-\\]|\*{1,2})\s*\d+)*)?/g;  // Not correct completely
+    const re = /\(?\d+\s*([+-\\]|\*{1,2})\s*\d+(\s*([+-\\]|\*{1,2})\s*\d+)*(\)?(\s*([+-\\]|\*{1,2})\s*\d+)*)?/g;  // Not correct completely
     return text.replace(re, (...args) => eval(args[0]))
 }
 
