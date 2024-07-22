@@ -56,13 +56,17 @@ function filter(iterable, callback) {
             return this;
         },
         next() {
-            let currentValue = iterator.next().value;
+            let currentState = iterator.next();
 
-            while (!callback(currentValue)) {
-                currentValue = iterator.next().value;
+            if (currentState.done) {
+                return {done: true, value: undefined};
+            };
+
+            while (!callback(currentState.value)) {
+                currentState = iterator.next();
             }
 
-            return {done: false, value: currentValue};
+            return {done: false, value: currentState.value};
         }
     }
 }
@@ -326,4 +330,4 @@ function mapSeq(iterable, callbacks) {
     }
 }
 
-console.log(...mapSeq([1, 2, 3], [(el) => el * 2, (el) => el - 1, el => el + 10])); // [1, 3, 5]
+console.log(...mapSeq([1, 2, 3], [(el) => el * 2, (el) => el - 1, el => el + 10]));
