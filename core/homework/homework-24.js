@@ -144,7 +144,7 @@ const boolExpr = or(
 // console.log(boolExpr.next()); // {done: true, value: {type: 'TAG', value: 'false'}}
 
 function repeat(parser, options) {
-    const {min = 1, max = Infinity} = options;
+    const {min = 1, max = Infinity} = options ?? {};
 
     if (min > max || max === 0) throw new Error('Invalid min and max params');
 
@@ -177,7 +177,7 @@ function repeat(parser, options) {
 
 const takeNumbers = repeat(
     seq(take(/\d/), tag(',')),
-    {min: 2},
+    {min: 1},
 )('100,200,300,');
   
 // console.log(takeNumbers.next()); // {done: false, value: {type: 'SEQ', value: '100,'}}
@@ -198,5 +198,3 @@ const takeNumbersOpt = repeat(
 // console.log(takeNumbersOpt.next()); // {done: false, value: {type: 'SEQ', value: '300'}}
 // console.log(takeNumbersOpt.next()); // {done: false, value: {type: 'SEQ', value: '400,'}}
 // console.log(takeNumbersOpt.next()); // {done: false, value: {type: 'SEQ', value: '500'}}
-
-  
