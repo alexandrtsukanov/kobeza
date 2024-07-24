@@ -17,6 +17,11 @@ function* gen2() {
 }
 
 const iter2 = gen2();
+// console.log(iter2.next());
+// console.log(iter2.next());
+// console.log(iter2.next());
+// console.log(iter2.next());
+
 console.log(...iter2);
 
 function* gen3() {
@@ -56,5 +61,5 @@ function* gen5() {
 const iter5 = gen5();
 
 console.log(iter5.next());
-console.log(iter5.next('def'));
+// console.log(iter5.next('def'));
 

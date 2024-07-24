@@ -133,3 +133,22 @@ console.log(a4
 
 var a5 = [1,2,3,4,5];
 console.log(a5[Symbol.iterator]())
+
+function createIterator(arr) {
+    let i = 0;
+    return {
+        [Symbol.iterator]() {
+            return this;
+        },
+        next() {
+            if (i === arr.length) return {done: true, value: undefined};
+            return {done: false, value: arr[i++]};
+        }
+    }
+}
+
+const iterr = createIterator([1, 2, 3, 4, 5]);
+
+for (const el of iterr) {
+    
+}
