@@ -131,7 +131,7 @@ function siblingsIterator(node) {
             return this;
         },
         next() {
-            if (i === children.nodes - 1) {
+            if (i === children.nodes.length - 1) {
                 return {done: true, value: undefined};
             }
 
@@ -153,7 +153,7 @@ function* siblingsGenerator(node) {
             continue;
         }
 
-        yield node;
+        yield childNode;
     }
 }
 
