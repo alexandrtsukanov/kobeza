@@ -105,6 +105,7 @@ const newString = 'abc3';
 // console.log(numbers.next());
 // console.log(numbers.next());
 // console.log(numbers.next());
+// console.log(numbers.next(''));
 // console.log(numbers.next());
 // console.log(numbers.next('4.5a1.2b'));
 // console.log(numbers.next());
