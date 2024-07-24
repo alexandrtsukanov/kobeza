@@ -131,7 +131,7 @@ function siblingsIterator(node) {
             return this;
         },
         next() {
-            if (i === children.nodes.length - 1) {
+            if (i === children.length - 1) {
                 return {done: true, value: undefined};
             }
 
