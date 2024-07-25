@@ -106,9 +106,8 @@ const res2 = new Result(() => 42);
 // res2.map((value) => value * 10).then(console.log); //420
 
 Function.prototype.map = function(callback) {
-    const call = (...args) => callback(args);
-    
-    const returned = call();
+    const toCall = (...args) => callback(args);
+    const returned = toCall();
 
     return () => this.call(this, returned);
 }
