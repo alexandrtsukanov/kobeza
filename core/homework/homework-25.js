@@ -64,53 +64,49 @@ const throttledLaugh = throttle(laugh2, 3000);
 
 class EventEmitter {
     constructor() {
-        this.callbacks = new Map();
+        this.events = new Map();
     };
 
     on(event, cb) {
-        if (!this.callbacks.has(event)) {
-            this.callbacks.set(event, new Set());
+        if (!this.events.has(event)) {
+            this.events.set(event, new Set());
         }
         
-        this.callbacks.get(event).add(cb);
+        this.events.get(event).add(cb);
     };
 
     off(event, cb) {
-        if (!this.callbacks.has(event)) {
+        if (!this.events.has(event)) {
             return;
         }
 
         if (cb) {
-            this.callbacks.get(event).delete(cb);
+            this.events.get(event).delete(cb);
         } else {
-            this.callbacks.get(event).clear();
+            this.events.get(event).clear();
         }
     };
 
     emit(event, ...args) {
-        if (!this.callbacks.has(event)) {
+        if (!this.events.has(event)) {
             return;
         }
         
-        this.callbacks.get(event).forEach(cb => cb(...args));
+        this.events.get(event).forEach(cb => cb(...args));
     };
 
     once(event, cb) {
-        if (!this.callbacks.has(event)) {
+        if (!this.events.has(event)) {
             return;
         }
 
-        const callbacks = this.callbacks.get(event);
-
-        const toCall = (...args) => {
+        const call = (...args) => {
             cb(...args)
         };
-
-        toCall();
-
-        if (callbacks.has(cb)) {
-            this.off(event, cb);
-        };
+        
+        call();
+        
+        this.off(event, cb);
     };
 }
 
@@ -121,6 +117,7 @@ const ee = new EventEmitter();
 // const f3 = () => {console.log(3)}
 // const f4 = () => {console.log(4)}
 // const f5 = () => {console.log(5)}
+// const f6 = () => {console.log(6)}
 
 // ee.on('foo', f1);
 // ee.on('foo', f2);
@@ -135,6 +132,7 @@ const ee = new EventEmitter();
 // ee.emit('bar');
 
 // ee.once('foo', f2);
+// ee.once('foo', f6);
 // ee.emit('foo');
 
 function waterfall(iterable, finalCb) {
