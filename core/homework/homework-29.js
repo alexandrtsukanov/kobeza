@@ -176,12 +176,15 @@ function allLimit(functions, limit) {
 
     const pendingPromises = inspector.getPending();
     
-    return new Promise((res, rej) => {
+    return new Promise((res, _) => {
         const output = [];
 
+        let pos = 0;
+
         while (limit) {
-            const pendingPromise = pendingPromises.pop();
-            output.push(pendingPromise)
+            const pendingPromise = pendingPromises[pos];
+            output.push(pendingPromise);
+            pos += 1;
             limit -= 1;
         }
 
