@@ -10,6 +10,10 @@ console.log(a.flatMap(a => [a, a]));
 console.log(a.flatMap(a => a));
 console.log(a.flatMap(a => console.log(a)));
 
+console.log(a.map(a => [a, a]));
+console.log(a.map(a => a));
+console.log(a.map(a => console.log(a)));
+
 class Lazy {
     constructor(executor) {
         this.executor = executor;
