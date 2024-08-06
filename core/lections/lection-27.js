@@ -40,6 +40,11 @@ class Lazy {
         return new Lazy(() => f(this.getValue()));
     }
 
+    // Applicative functor: Lazy<function>
+    apply(f) {
+        return new Lazy(() => f.then(f => f(this.getValue())).getValue());
+    }
+
     resolve(a) {
         if (a instanceof Lazy) return a;
         return new Lazy(() => a)
