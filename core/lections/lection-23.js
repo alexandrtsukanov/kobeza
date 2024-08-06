@@ -60,6 +60,6 @@ function* gen5() {
 
 const iter5 = gen5();
 
-console.log(iter5.next());
+console.log(5, iter5.next());
 // console.log(iter5.next('def'));
 
