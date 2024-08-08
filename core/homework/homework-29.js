@@ -91,7 +91,6 @@ class SyncPromise {
         } catch(err) {
             this.reject(err);
         }
-
     };
 
     resolve(value) {
@@ -110,7 +109,11 @@ class SyncPromise {
 
     then(cb) {
         if (this.state === 'fulfilled') {
-            cb(this.value);
+            try {
+                this.value = cb(this.value);
+            } catch(err) {
+                this.reject(err);
+            }
         }
 
         return this;
@@ -118,17 +121,23 @@ class SyncPromise {
 
     catch(cb) {
         if (this.state === 'rejected') {
-            cb(this.reason);
+            this.reason = cb(this.reason);
         }
 
+        this.state = 'fulfilled'
+        this.value = undefined;
         return this;
     };
+
+    finally(cb) {
+        cb(this.value);
+    }
 }
 
 const sp = new SyncPromise();
 
-sp.resolve(1).then(console.log);          // 1
-console.log(2);                           // 2
+sp.resolve(1).then(console.log); // 1
+console.log(2);                  // 2
 
 // ## Необходимо написать функцию allLimit, которая бы принимала Iterable функций, возвращающих Promise (или обычные значения) и лимит одновременных Promise
 // Одновременно не должно быть более заданного числа Promise в Pending.

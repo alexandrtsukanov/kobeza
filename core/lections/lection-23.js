@@ -5,10 +5,10 @@ function* gen() {
 
 const iter = gen();
 
-console.log(iter.next());
-console.log(iter.next());
-console.log(iter.next(4));
-console.log(iter.next());
+console.log(1, iter.next());
+console.log(1, iter.next());
+console.log(1, iter.next(4));
+console.log(1, iter.next());
 
 function* gen2() {
     yield 1;
@@ -31,9 +31,9 @@ function* gen3() {
 
 const iter3 = gen3();
 
-console.log(iter3.next());
-console.log(iter3.next());
-console.log(iter3.next());
+console.log(3, iter3.next());
+console.log(3, iter3.next());
+console.log(3, iter3.next());
 
 function* gen4() {
     yield 1;
@@ -43,10 +43,10 @@ function* gen4() {
 
 const iter4 = gen4();
 
-console.log(iter4.next());
-console.log(iter4.next());
-console.log(iter4.return(10));
-console.log(iter4.next());
+console.log(4, iter4.next());
+console.log(4, iter4.next());
+console.log(4, iter4.return(10));
+console.log(4, iter4.next());
 
 function* gen5() {
     let input = yield;
@@ -63,3 +63,17 @@ const iter5 = gen5();
 console.log(5, iter5.next());
 // console.log(iter5.next('def'));
 
+function* gen6(data) {
+    while (true) {
+        for (const char of data) {
+            console.log(char);
+        }
+
+        data = yield 'Expect data';
+    }
+}
+
+const iter6 = gen6('abcdef');
+
+console.log(6, iter6.next()); // value - 'Expect data'
+// console.log(6, iter5.next('ghi')); // data = ghi

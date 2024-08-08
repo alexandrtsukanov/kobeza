@@ -83,13 +83,11 @@ function any(...iterators) {
         result = first.value;
         console.log(result);
         const p = promises.pop();
-        p.resolve({odne: false, value: result})
+        p.resolve({odne: false, value: result});
     }
     
     callback();
 
-    result.target.addEventListener(result.type, callback);
-    
     return {
         [Symbol.asyncIterator]() {
             return this;
@@ -111,6 +109,36 @@ function any(...iterators) {
         console.log({event: e});
     }
 })();
+
+function anyD(...iterators) {
+    const promises = [];
+
+    let result;
+
+    const callback = async () => {
+        const first = await Promise.race(iterators.map(i => i.next()));
+        result = first.value;
+        console.log(result);
+        const p = promises.pop();
+        p.resolve({odne: false, value: result});
+    }
+    
+    callback();
+
+    result.target.addEventListener(result.type, callback);
+    
+    return {
+        [Symbol.asyncIterator]() {
+            return this;
+        },
+        next() {
+            console.log('NEXT');
+            const promise = withResolvers();
+            promises.push(promise);
+            return promise.promise;
+        }
+    }
+}
 
 // function any(...iterators) {
 //     const promises = [];
