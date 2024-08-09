@@ -150,7 +150,6 @@ function Inspector() {
  
         if (!p.state) {
             p.state = 'pending';
-    
             p.then(() => p.state = 'resolved').catch(() => p.state = 'rejected');
         }
  
