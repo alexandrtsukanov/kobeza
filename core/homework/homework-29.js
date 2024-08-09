@@ -151,14 +151,7 @@ function Inspector() {
         if (!p.state) {
             p.state = 'pending';
     
-            p.then(
-                function(_) {
-                    p.state = 'resolved';
-                },
-                function(_) {
-                    p.state = 'rejected';
-                }
-            );
+            p.then(() => p.state = 'resolved').catch(() => p.state = 'rejected');
         }
  
        arr.push(p);
