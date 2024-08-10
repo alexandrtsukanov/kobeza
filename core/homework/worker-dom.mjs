@@ -8,14 +8,16 @@ let port;
 //     doc = document;
 // });
 
-parentPort.on('message', (data) => {
-    if (data.type === 'connect') {
-        console.log(111, data);
-        doc = data;
-        port = data.port;
-        port.postMessage('MESSAGE');
-        port.on('message', console.log);
-    }
-});
+parentPort.postMessage('document');
 
-console.log(doc);
+// parentPort.on('message', (data) => {
+//     if (data.type === 'connect') {
+//         console.log(111, data);
+//         doc = data;
+//         port = data.port;
+//         port.postMessage('MESSAGE');
+//         port.on('message', console.log);
+//     }
+// });
+
+// console.log(doc);

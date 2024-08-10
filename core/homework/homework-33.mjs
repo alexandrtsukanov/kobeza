@@ -2,14 +2,29 @@ import {Worker, MessageChannel} from 'node:worker_threads';
 
 const workerDom = new Worker('./worker-dom.mjs');
 
-workerDom.postMessage({value: 'document'});
+let dom;
 
-//
+const p = new Promise((resolve) => {
+    workerDom.on('message', data => {
+        resolve(data);
+    })
+})
 
-const channel = new MessageChannel();
+p.then(data => {
+    dom = data;
+    console.log(dom);
+})
 
-workerDom.postMessage({type: 'connect', port: channel.port1}, [channel.port1]);
-channel.port1.on('message', (d) => console.log('parent =>', d));
+console.log('!!!! ====>', dom);
+
+// workerDom.postMessage({value: 'document'});
+
+// //
+
+// const channel = new MessageChannel();
+
+// workerDom.postMessage({type: 'connect', port: channel.port1}, [channel.port1]);
+// channel.port1.on('message', (d) => console.log('parent =>', d));
 
 // workerDom.on('message', console.log);
 
