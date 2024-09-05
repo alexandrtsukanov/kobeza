@@ -41,7 +41,7 @@ class LocalStorage extends Storage {
     }
 
     remove(key) {
-        localStorage.removeItem(key, value);
+        localStorage.removeItem(key);
 
         this.removeFromBuffer(key);
     }
