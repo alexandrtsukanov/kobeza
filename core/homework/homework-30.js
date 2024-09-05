@@ -200,3 +200,37 @@ function seq(...iterables) {
 //         console.log(e);
 //     }
 // })();
+
+function any(...iterables) {
+
+}
+
+async function* every(iter, pred) {
+    for await (const val of iter) {
+        if (pred(val)) {
+            yield val;
+        } else {
+            return;
+        }
+    }
+}
+
+async function* filter(iter, pred) {
+    for await (const val of iter) {
+        if (pred(val)) {
+            yield val;
+        }
+    }
+}
+
+function onlyEvent(event) {
+    return ({type}) => type === event;
+}
+
+async function* repeat(callback) {
+    while (true) {
+        for await (const iter of callback) {
+            yield iter;
+        }
+    }
+}
