@@ -7,11 +7,11 @@ class Storage {
         return this.buffer.get(key);
     }
 
-    set(key, value) {
+    setToBuffer(key, value) {
        this.buffer.set(key, value);
     }
 
-    remove(key) {
+    removeFromBuffer(key) {
         this.buffer.delete(key);
     }
 
@@ -34,6 +34,18 @@ class LocalStorage extends Storage {
         this.buffer = this.#convertLSToMap();
     }
 
+    set(key, value) {
+        localStorage.setItem(key, value);
+
+        this.setToBuffer(key, value);
+    }
+
+    remove(key) {
+        localStorage.removeItem(key, value);
+
+        this.removeFromBuffer(key);
+    }
+
     #convertLSToMap() {
         const buffer = new Map();
 
@@ -53,6 +65,44 @@ class CookieStorage extends Storage {
         super();
         this.delimeter = '; ';
         this.buffer = this.#convertCookieToMap();
+    }
+
+    setCookie(key, value) {
+        options = {
+            path: '/',
+            ...options
+        };
+        
+        if (options.expires instanceof Date) {
+            options.expires = options.expires.toUTCString();
+        }
+        
+        let updatedCookie = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+        
+        for (let optionKey in options) {
+            updatedCookie += '; ' + optionKey;
+
+            let optionValue = options[optionKey];
+
+            if (optionValue !== true) {
+              updatedCookie += '=' + optionValue;
+            }
+        }
+        
+        document.cookie = updatedCookie;
+    }
+
+    set(key, value) {
+        this.setCookie(key, value);
+        this.setToBuffer(key, value);
+    }
+
+    remove(key) {
+        this.setCookie(key, '', {
+            'max-age': -1,
+        })
+        
+        this.removeFromBuffer(key);
     }
 
     #convertCookieToMap() {
